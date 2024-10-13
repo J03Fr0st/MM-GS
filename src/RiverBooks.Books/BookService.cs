@@ -1,30 +1,61 @@
-﻿namespace RiverBooks.Books;
+﻿
+namespace RiverBooks.Books;
 
 internal class BookService : IBookService
 {
-    public List<BookDto> ListBooks()
+  private readonly IBookRepository _bookRepository;
+
+  public BookService(IBookRepository bookRepository)
+  {
+    _bookRepository = bookRepository;
+  }
+
+  public async Task CreateBookAsync(BookDto newBook)
+  {
+    var book = new Book(newBook.Id, newBook.Title, newBook.Author, newBook.Price);
+
+    await _bookRepository.AddAsync(book);
+    await _bookRepository.SaveChangesAsync();
+  }
+
+  public async Task DeleteBookAsync(Guid id)
+  {
+    var bookToDelete = await _bookRepository.GetByIdAsync(id);
+
+    if (bookToDelete is not null)
     {
-        return new List<BookDto>()
-        {
-            new BookDto(Guid.NewGuid(), "The Hobbit", "J.R.R. Tolkien", 1937),
-            new BookDto(Guid.NewGuid(), "The Fellowship of the Ring", "J.R.R. Tolkien", 1954),
-            new BookDto(Guid.NewGuid(), "The Two Towers", "J.R.R. Tolkien", 1954),
-            new BookDto(Guid.NewGuid(), "The Return of the King", "J.R.R. Tolkien", 1955),
-            new BookDto(Guid.NewGuid(), "The Silmarillion", "J.R.R. Tolkien", 1977),
-            new BookDto(Guid.NewGuid(), "The Children of Húrin", "J.R.R. Tolkien", 2007),
-            new BookDto(Guid.NewGuid(), "Unfinished Tales", "J.R.R. Tolkien", 1980),
-            new BookDto(Guid.NewGuid(), "The History of Middle-earth", "J.R.R. Tolkien", 1983),
-            new BookDto(Guid.NewGuid(), "The Fall of Gondolin", "J.R.R. Tolkien", 2018),
-            new BookDto(Guid.NewGuid(), "Beren and Lúthien", "J.R.R. Tolkien", 2017),
-            new BookDto(Guid.NewGuid(), "The Adventures of Tom Bombadil", "J.R.R. Tolkien", 1962),
-            new BookDto(Guid.NewGuid(), "The Road Goes Ever On", "J.R.R. Tolkien", 1967),
-            new BookDto(Guid.NewGuid(), "The Father Christmas Letters", "J.R.R. Tolkien", 1976),
-            new BookDto(Guid.NewGuid(), "The Letters of J.R.R. Tolkien", "J.R.R. Tolkien", 1981),
-            new BookDto(Guid.NewGuid(), "The Monsters and the Critics", "J.R.R. Tolkien", 1983),
-            new BookDto(Guid.NewGuid(), "Beowulf: A Translation and Commentary", "J.R.R. Tolkien", 2014),
-            new BookDto(Guid.NewGuid(), "The Story of Kullervo", "J.R.R. Tolkien", 2015),
-            new BookDto(Guid.NewGuid(), "The Lay of Aotrou and Itroun", "J.R.R. Tolkien", 2016),
-            new BookDto(Guid.NewGuid(), "The Fall of Arthur", "J.R.R. Tolkien", 2013)
-        };
+      await _bookRepository.DeleteAsync(bookToDelete);
+      await _bookRepository.SaveChangesAsync();
     }
+  }
+
+  public async Task<BookDto> GetBookByIdAsync(Guid id)
+  {
+    var book = await _bookRepository.GetByIdAsync(id);
+
+    // TODO: handle not found case
+
+    return new BookDto(book!.Id, book.Title, book.Author, book.Price);
+  }
+
+  public async Task<List<BookDto>> ListBooksAsync()
+  {
+    var books = (await _bookRepository.ListAsync())
+      .Select(book => new BookDto(book.Id, book.Title, book.Author, book.Price))
+      .ToList();
+
+    return books;
+  }
+
+  public async Task UpdateBookPriceAsync(Guid bookId, decimal newPrice)
+  {
+    // validate the price
+
+    var book = await _bookRepository.GetByIdAsync(bookId);
+
+    // handle not found case
+
+    book!.UpdatePrice(newPrice);
+    await _bookRepository.SaveChangesAsync();
+  }
 }

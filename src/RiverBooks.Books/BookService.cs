@@ -1,14 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace RiverBooks.Books;
-
-internal interface IBookService
-{
-    IEnumerable<BookDto> ListBooks();
-}
-
-public record BookDto(Guid Id, string Title, string Author, int Year);
+﻿namespace RiverBooks.Books;
 
 internal class BookService : IBookService
 {
@@ -36,22 +26,5 @@ internal class BookService : IBookService
             new BookDto(Guid.NewGuid(), "The Lay of Aotrou and Itroun", "J.R.R. Tolkien", 2016),
             new BookDto(Guid.NewGuid(), "The Fall of Arthur", "J.R.R. Tolkien", 2013)
         };
-    }
-}
-
-public static class BookEndpoints
-{
-    public static void MapBooksEndpoint(this WebApplication app)
-    {
-        app.MapGet("/books", (IBookService bookService) => { return bookService.ListBooks(); });
-    }
-}
-
-public static class BookServiceExtensions
-{
-    public static IServiceCollection AddBookServices(this IServiceCollection services)
-    {
-        services.AddScoped<IBookService, BookService>();
-        return services;
     }
 }

@@ -9,5 +9,11 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="BookService.cs">
+      <DependentUpon>IBookService.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
 </Project>

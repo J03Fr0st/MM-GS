@@ -1,9 +1,11 @@
+using FastEndpoints;
 using RiverBooks.Books;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddFastEndpoints();
 
 // Add module services
 builder.Services.AddBookServices();
@@ -19,7 +21,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Map module endpoints
-app.MapBooksEndpoint();
+app.UseFastEndpoints();
 
 app.Run();

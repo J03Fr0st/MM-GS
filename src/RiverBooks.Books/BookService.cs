@@ -2,9 +2,9 @@
 
 internal class BookService : IBookService
 {
-    public IEnumerable<BookDto> ListBooks()
+    public List<BookDto> ListBooks()
     {
-        return new[]
+        return new List<BookDto>()
         {
             new BookDto(Guid.NewGuid(), "The Hobbit", "J.R.R. Tolkien", 1937),
             new BookDto(Guid.NewGuid(), "The Fellowship of the Ring", "J.R.R. Tolkien", 1954),

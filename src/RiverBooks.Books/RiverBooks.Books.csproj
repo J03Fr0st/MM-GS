@@ -15,5 +15,9 @@
       <DependentUpon>IBookService.cs</DependentUpon>
     </Compile>
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.30.0" />
+  </ItemGroup>
 
 </Project>
